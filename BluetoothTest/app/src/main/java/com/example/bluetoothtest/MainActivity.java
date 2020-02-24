@@ -23,7 +23,6 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     BluetoothAdapter mBluetoothAdapter;
-    Button btnEnableDisable_Discoverable;
 
     //Create BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mBroadcastReciever1 = new BroadcastReceiver() {
@@ -58,39 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 //Add the name and address to an array adapter to show in a ListView
                 //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             //}
-        }
-    };
-
-    private final BroadcastReceiver mBroadcastReciever2 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if(action.equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED))
-            {
-                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
-
-                switch(mode)
-                {
-                    //Device is in disco mode
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(TAG, "mBroadcastReciever2: Disco Enabled!");
-                        break;
-                     //Device not in disco mode
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(TAG, "mBroadcastReciever2: Disco Enabled. Able to recieve connections");
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(TAG, "mBroadcastReciever2: Disco Enabled. No able to recieve connections");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(TAG, "mBroadcastReciever2: Connecting...");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(TAG, "mBroadcastReciever2: Connected.");
-                        break;
-                }
-            }
         }
     };
 
@@ -129,20 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 enableDisableBT();
             }
         });
-
-        btnEnableDisable_Discoverable = (Button) findViewById(R.id.btnDiscoverable_on_off);
-
-        btnEnableDisable_Discoverable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: enable/disbaling bluetooth disco.");
-                //TODO create button on click
-
-                btnEnableDisable_Discoverable(v);
-            }
-        });
-
-
     }
 
 
@@ -195,20 +147,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void btnEnableDisable_Discoverable(View view) {
-
-        Log.d(TAG, "btnEnableDiable_Discoverable: Making device discoverable for 300 seconds");
-
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 20);
-        startActivity(discoverableIntent);
-
-        IntentFilter intentFilter = new IntentFilter(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-
-        registerReceiver(mBroadcastReciever2, intentFilter);
-
-
     }
 }
